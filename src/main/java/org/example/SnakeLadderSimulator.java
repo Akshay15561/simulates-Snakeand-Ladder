@@ -40,39 +40,56 @@ public class SnakeLadderSimulator {
         // Player's initial position
         int playerPosition = 0;
 
-        // Random number generator for die rolls
-        Random random = new Random();
 
         // Play the game until the player reaches the winning position
         while (playerPosition < WINNING_POSITION) {
+            System.out.println("\nPlayer's current position: " + playerPosition);
+
             // Roll the die using RANDOM
             int dieRoll = (int) (Math.random() * 6) + 1; // Generates a number between 1 and 6
             System.out.println("The Player rolls the die to get a number between 1 to 6.");
             System.out.println("Rolled a " + dieRoll);
 
-            // Move the player
-            int newPosition = playerPosition + dieRoll;
+            // Check for options using RANDOM (0 = No Play, 1 = Ladder, 2 = Snake)
+            int option = (int) (Math.random() * 3); // Generates 0, 1, or 2
+            switch (option) {
+                case 0: // No Play
+                    System.out.println("Option: No Play. The player stays in the same position.");
+                    break;
 
-            // Check if the new position is within bounds
-            if (newPosition > WINNING_POSITION) {
+                case 1: // Ladder
+                    System.out.println("Option: Ladder. The player moves ahead by " + dieRoll + " positions.");
+                    playerPosition += dieRoll;
+
+                    // Check for ladders again in the new position
+                    if (ladders.containsKey(playerPosition)) {
+                        System.out.println("Hooray! Found a ladder! Move up to " + ladders.get(playerPosition));
+                        playerPosition = ladders.get(playerPosition);
+                    }
+                    break;
+
+                case 2: // Snake
+                    System.out.println("Option: Snake. The player moves back by " + dieRoll + " positions.");
+                    playerPosition -= dieRoll;
+
+                    // Ensure position does not go below 0
+                    if (playerPosition < 0) {
+                        playerPosition = 0;
+                    }
+
+                    // Check for snakes again in the new position
+                    if (snakes.containsKey(playerPosition)) {
+                        System.out.println("Oh no! Bitten by a snake! Slide down to " + snakes.get(playerPosition));
+                        playerPosition = snakes.get(playerPosition);
+                    }
+                    break;
+            }
+
+            // Ensure position does not exceed the winning position
+            if (playerPosition > WINNING_POSITION) {
+                playerPosition -= dieRoll;
                 System.out.println("Overshoot! Stay at position " + playerPosition);
-                continue;
             }
-
-            // Check for snakes
-            if (snakes.containsKey(newPosition)) {
-                System.out.println("Oh no! Bitten by a snake! Slide down to " + snakes.get(newPosition));
-                newPosition = snakes.get(newPosition);
-            }
-            // Check for ladders
-            else if (ladders.containsKey(newPosition)) {
-                System.out.println("Hooray! Climbed a ladder! Move up to " + ladders.get(newPosition));
-                newPosition = ladders.get(newPosition);
-            }
-
-            // Update player's position
-            playerPosition = newPosition;
-            System.out.println("Player's current position: " + playerPosition);
 
             // Check if the player has won
             if (playerPosition == WINNING_POSITION) {
