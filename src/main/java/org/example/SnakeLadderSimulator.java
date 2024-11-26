@@ -39,15 +39,16 @@ public class SnakeLadderSimulator {
 
         // Player's initial position
         int playerPosition = 0;
+        int diceRollCount = 0; // To track the number of dice rolls
 
 
         // Play the game until the player reaches the winning position
-        while (playerPosition < WINNING_POSITION) {
-            System.out.println("\nPlayer's current position: " + playerPosition);
+        while (playerPosition != WINNING_POSITION) {
 
             // Roll the die using RANDOM
             int dieRoll = (int) (Math.random() * 6) + 1; // Generates a number between 1 and 6
-            System.out.println("The Player rolls the die to get a number between 1 to 6.");
+            diceRollCount++;
+            System.out.println("\nRoll " + diceRollCount + ": The Player rolls the die to get a number between 1 to 6.");
             System.out.println("Rolled a " + dieRoll);
 
             // Calculate the new position
@@ -68,29 +69,29 @@ public class SnakeLadderSimulator {
 
                 case 1: // Ladder
                     System.out.println("Option: Ladder. The player moves ahead by " + dieRoll + " positions.");
-                    playerPosition += dieRoll;
+                    newPosition += dieRoll;
 
                     // Check for ladders again in the new position
-                    if (ladders.containsKey(playerPosition)) {
+                    if (ladders.containsKey(newPosition)) {
                         System.out.println("Hooray! Found a ladder! Move up to " + ladders.get(playerPosition));
-                        playerPosition = ladders.get(playerPosition);
+                        playerPosition = ladders.get(newPosition);
                     }
                     break;
 
                 case 2: // Snake
                     System.out.println("Option: Snake. The player moves back by " + dieRoll + " positions.");
-                    playerPosition -= dieRoll;
+                    newPosition -= dieRoll;
 
                     // Ensure position does not go below 0
-                    if (playerPosition < 0) {
+                    if (newPosition < 0) {
                         System.out.println("Oh no! The player has moved below 0! Restarting from 0.");
-                        playerPosition = 0;
+                        newPosition = 0;
                     }
 
                     // Check for snakes again in the new position
-                    if (snakes.containsKey(playerPosition)) {
+                    if (snakes.containsKey(newPosition)) {
                         System.out.println("Oh no! Bitten by a snake! Slide down to " + snakes.get(playerPosition));
-                        playerPosition = snakes.get(playerPosition);
+                        playerPosition = snakes.get(newPosition);
                     }
                     break;
             }
@@ -104,10 +105,13 @@ public class SnakeLadderSimulator {
             if (playerPosition < 0) {
                 playerPosition = 0;
             }
+            // Report the player's position after the die roll
+            System.out.println("Player's position after roll " + diceRollCount + ": " + playerPosition);
 
             // Check if the player has won
             if (playerPosition == WINNING_POSITION) {
                 System.out.println("Congratulations! You've reached the winning position 100!");
+                System.out.println("Total dice rolls to win: " + diceRollCount);
             }
 
         }
