@@ -50,6 +50,15 @@ public class SnakeLadderSimulator {
             System.out.println("The Player rolls the die to get a number between 1 to 6.");
             System.out.println("Rolled a " + dieRoll);
 
+            // Calculate the new position
+            int newPosition = playerPosition + dieRoll;
+
+            // Check if the new position exceeds the winning position
+            if (newPosition > WINNING_POSITION) {
+                System.out.println("Overshoot! Stay at position " + playerPosition);
+                continue;
+            }
+
             // Check for options using RANDOM (0 = No Play, 1 = Ladder, 2 = Snake)
             int option = (int) (Math.random() * 3); // Generates 0, 1, or 2
             switch (option) {
@@ -86,10 +95,14 @@ public class SnakeLadderSimulator {
                     break;
             }
 
-            // Ensure position does not exceed the winning position
-            if (playerPosition > WINNING_POSITION) {
-                playerPosition -= dieRoll;
-                System.out.println("Overshoot! Stay at position " + playerPosition);
+            // Update the player's position if it's within bounds
+            if (newPosition <= WINNING_POSITION) {
+                playerPosition = newPosition;
+            }
+
+            // Ensure position does not go below 0
+            if (playerPosition < 0) {
+                playerPosition = 0;
             }
 
             // Check if the player has won
