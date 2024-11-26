@@ -74,6 +74,7 @@ public class SnakeLadderSimulator {
 
                     // Ensure position does not go below 0
                     if (playerPosition < 0) {
+                        System.out.println("Oh no! The player has moved below 0! Restarting from 0.");
                         playerPosition = 0;
                     }
 
