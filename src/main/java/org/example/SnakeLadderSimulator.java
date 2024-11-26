@@ -45,8 +45,9 @@ public class SnakeLadderSimulator {
 
         // Play the game until the player reaches the winning position
         while (playerPosition < WINNING_POSITION) {
-            // Roll the die
-            int dieRoll = random.nextInt(6) + 1;
+            // Roll the die using RANDOM
+            int dieRoll = (int) (Math.random() * 6) + 1; // Generates a number between 1 and 6
+            System.out.println("The Player rolls the die to get a number between 1 to 6.");
             System.out.println("Rolled a " + dieRoll);
 
             // Move the player
