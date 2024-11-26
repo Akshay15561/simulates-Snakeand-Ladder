@@ -37,26 +37,36 @@ public class SnakeLadderSimulator {
         ladders.put(72, 91);
         ladders.put(80, 99);
 
-        // Player's initial position
-        int playerPosition = 0;
+        // Players' positions
+        int player1Position = 0;
+        int player2Position = 0;
         int diceRollCount = 0; // To track the number of dice rolls
+
+        boolean isPlayer1Turn = true; // Player 1 starts the game
+
 
 
         // Play the game until the player reaches the winning position
-        while (playerPosition != WINNING_POSITION) {
+        while (player1Position != WINNING_POSITION && player2Position != WINNING_POSITION) {
+            String currentPlayer = isPlayer1Turn ? "Player 1" : "Player 2";
+            int currentPosition = isPlayer1Turn ? player1Position : player2Position;
+
+            System.out.println("\n" + currentPlayer + "'s turn. Current position: " + currentPosition);
 
             // Roll the die using RANDOM
             int dieRoll = (int) (Math.random() * 6) + 1; // Generates a number between 1 and 6
             diceRollCount++;
-            System.out.println("\nRoll " + diceRollCount + ": The Player rolls the die to get a number between 1 to 6.");
-            System.out.println("Rolled a " + dieRoll);
+            System.out.println(currentPlayer + " rolls the die and gets " + dieRoll);
 
             // Calculate the new position
-            int newPosition = playerPosition + dieRoll;
+            int newPosition = currentPosition + dieRoll;
 
             // Check if the new position exceeds the winning position
             if (newPosition > WINNING_POSITION) {
-                System.out.println("Overshoot! Stay at position " + playerPosition);
+                System.out.println("Overshoot! Stay at position " + currentPosition);
+                if (isPlayer1Turn) player1Position = currentPosition;
+                else player2Position = currentPosition;
+                isPlayer1Turn = !isPlayer1Turn; // Switch turns
                 continue;
             }
 
@@ -64,59 +74,66 @@ public class SnakeLadderSimulator {
             int option = (int) (Math.random() * 3); // Generates 0, 1, or 2
             switch (option) {
                 case 0: // No Play
-                    System.out.println("Option: No Play. The player stays in the same position.");
+                    System.out.println("Option: No Play. " + currentPlayer + " stays in the same position.");
                     break;
 
                 case 1: // Ladder
-                    System.out.println("Option: Ladder. The player moves ahead by " + dieRoll + " positions.");
+                    System.out.println("Option: Ladder. " + currentPlayer + " moves ahead by " + dieRoll + " positions.");
                     newPosition += dieRoll;
 
                     // Check for ladders again in the new position
                     if (ladders.containsKey(newPosition)) {
-                        System.out.println("Hooray! Found a ladder! Move up to " + ladders.get(playerPosition));
-                        playerPosition = ladders.get(newPosition);
+                        System.out.println("Hooray! " + currentPlayer + " found a ladder! Move up to " + ladders.get(newPosition));
+                        newPosition = ladders.get(newPosition);
                     }
+                    System.out.println(currentPlayer + " gets another turn!");
                     break;
 
                 case 2: // Snake
-                    System.out.println("Option: Snake. The player moves back by " + dieRoll + " positions.");
+                    System.out.println("Option: Snake. " + currentPlayer + " moves back by " + dieRoll + " positions.");
                     newPosition -= dieRoll;
 
                     // Ensure position does not go below 0
                     if (newPosition < 0) {
-                        System.out.println("Oh no! The player has moved below 0! Restarting from 0.");
+                        System.out.println("Oh no! " + currentPlayer + " has moved below 0! Restarting from 0.");
                         newPosition = 0;
                     }
 
                     // Check for snakes again in the new position
                     if (snakes.containsKey(newPosition)) {
-                        System.out.println("Oh no! Bitten by a snake! Slide down to " + snakes.get(playerPosition));
-                        playerPosition = snakes.get(newPosition);
+                        System.out.println("Oh no! Bitten by a snake! Slide down to " + snakes.get(newPosition));
+                        newPosition = snakes.get(newPosition);
                     }
                     break;
             }
 
-            // Update the player's position if it's within bounds
-            if (newPosition <= WINNING_POSITION) {
-                playerPosition = newPosition;
-            }
+            // Update the player's position
+            if (isPlayer1Turn) player1Position = newPosition;
+            else player2Position = newPosition;
 
-            // Ensure position does not go below 0
-            if (playerPosition < 0) {
-                playerPosition = 0;
-            }
+            // Ensure the position does not go below 0
+            if (player1Position < 0) player1Position = 0;
+            if (player2Position < 0) player2Position = 0;
+
             // Report the player's position after the die roll
-            System.out.println("Player's position after roll " + diceRollCount + ": " + playerPosition);
+            System.out.println(currentPlayer + "'s position after the roll: " + newPosition);
 
-            // Check if the player has won
-            if (playerPosition == WINNING_POSITION) {
-                System.out.println("Congratulations! You've reached the winning position 100!");
-                System.out.println("Total dice rolls to win: " + diceRollCount);
+            // Switch turns unless the player got a ladder
+            if (option != 1) {
+                isPlayer1Turn = !isPlayer1Turn;
             }
+        }
+
+        // Announce the winner
+        if (player1Position == WINNING_POSITION) {
+            System.out.println("\nCongratulations! Player 1 wins the game!");
+        } else {
+            System.out.println("\nCongratulations! Player 2 wins the game!");
+        }
+        System.out.println("Total dice rolls in the game: " + diceRollCount);
+    }
 
         }
 
 
 
-    }
-}
